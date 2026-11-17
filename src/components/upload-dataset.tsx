@@ -27,6 +27,7 @@ export function UploadDataset({ competition, challenge }: { competition: string;
     try {
       const { error } = await supabaseBrowser().storage.from("competition-datasets").upload(path, file, {
         contentType: extension === "zip" ? "application/zip" : "text/csv",
+        metadata: { originalName: file.name },
       });
       if (error) return { error: error.message };
       form.delete("dataset");

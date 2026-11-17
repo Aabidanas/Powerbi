@@ -287,6 +287,8 @@ td strong + .badge { margin-left: 5px; }
 .plain-panel { border: var(--line); border-radius: 7px; padding: 11px; background: var(--paper); }
 .plain-panel ul { margin-block: 8px; }
 .plain-panel .button { margin-top: 7px; }
+.attached-dataset { margin-block: 10px; padding: 9px; border: var(--line); border-radius: 6px; overflow-wrap: anywhere; }
+.attached-dataset h4,.attached-dataset p { margin: 0; }
 .editor-list { padding: 0; margin-top: 8px; display: grid; gap: 6px; }
 .editor-list li,.monitor-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid #ccc9c0; padding-block: 5px; }
 .editor-list .button { flex-shrink: 0; margin: 0; }

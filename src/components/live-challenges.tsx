@@ -2,6 +2,7 @@ import { ClipboardList } from "lucide-react";
 import { manageCompetition } from "@/app/admin/actions";
 import { CHECKPOINT_TEMPLATE } from "@/lib/checkpoint-import";
 import { DEFAULT_CHECKPOINT_POINTS, MAX_CHECKPOINT_POINTS } from "@/lib/challenges";
+import { datasetFileName, datasetFileSize, type AttachedDataset } from "@/lib/datasets";
 import { requireAdmin } from "@/lib/supabase/access";
 import { LiveForm } from "./live-form";
 import { UploadDataset } from "./upload-dataset";
@@ -32,20 +33,33 @@ function CheckpointEditor({ challenge, position, question, answerKey }: {
 export async function LiveChallenges() {
   const { event, client } = await requireAdmin();
 
-  const [cases, keys, scores] = await Promise.all([
+  const [cases, keys, scores, files] = await Promise.all([
     client.from("challenges").select("id,slug,name,description,dataset_path,checkpoints(id,position,title,question,answer_type,starter_query,base_points)").eq("competition_id", event.id).order("name"),
     client.rpc("admin_case_keys", { p_competition: event.id }),
     client.from("leaderboard_scores").select("track_slug").eq("competition_id", event.id),
+    client.rpc("admin_attached_datasets", { p_competition: event.id }),
   ]);
   if (cases.error || keys.error || scores.error) throw new Error("Could not load the challenge library.");
   const startedTracks = new Set(scores.data.map(score => score.track_slug));
   const answerKeys = new Map((keys.data as Key[]).map(key => [key.checkpoint_id, key]));
+  const attachedFiles = new Map(((files.data ?? []) as AttachedDataset[]).map(file => [file.challenge_id, file]));
   return <div className="shell page organizer-page">
     <PageTitle tag="Organizer · Live competition" title="Challenge Library">Manage datasets, questions, hints, and answer keys before players begin each track.</PageTitle>
     <Action href="/admin" secondary className="small-button">Back to organizer console</Action>
     <section id="cases" className="compact"><Card className="panel">
       <div className="micro-head"><strong><ClipboardList size={16}/> Challenges and datasets</strong></div>
-      <div className="team-admin-grid">{cases.data.map(item => { const editable = !startedTracks.has(item.slug); return <div key={item.id} className="plain-panel"><h3>{item.name}</h3><p>{item.description}</p><Badge>{editable ? "Editable" : "In use"} · {item.checkpoints.length} checkpoints</Badge>
+      <div className="team-admin-grid">{cases.data.map(item => {
+        const editable = !startedTracks.has(item.slug);
+        const file = attachedFiles.get(item.id);
+        const fileSize = file && datasetFileSize(file);
+        return <div key={item.id} className="plain-panel"><h3>{item.name}</h3><p>{item.description}</p><Badge>{editable ? "Editable" : "In use"} · {item.checkpoints.length} checkpoints</Badge>
+        <div className="attached-dataset">
+          <h4>Attached dataset</h4>
+          {file ? <>
+            <p>{datasetFileName(file)}{fileSize && ` · ${fileSize}`}</p>
+            <a className="button secondary small-button" href={`/admin/challenges/${item.id}/dataset`}>Download dataset</a>
+          </> : <p className="muted">{files.error ? "Dataset details unavailable." : "No dataset attached."}</p>}
+        </div>
         {editable && <Popup label="Edit case and dataset" title={item.name}><LiveForm action={manageCompetition} operation="case" label="Save challenge">
           <input type="hidden" name="challenge" value={item.id}/><label>Case name<input name="name" defaultValue={item.name} required maxLength={80}/></label><label>Description<textarea name="description" defaultValue={item.description} required maxLength={1000}/></label><label>Private dataset object path<input name="path" defaultValue={item.dataset_path} required/></label>
         </LiveForm></Popup>}
