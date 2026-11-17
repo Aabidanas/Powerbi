@@ -69,7 +69,7 @@ export async function playerMission(team: string) {
   if (!assignment.data) return null;
   const [challenge, questions] = await Promise.all([
     client.from("challenges").select("id,name,slug,description").eq("id", assignment.data.challenge_id).single(),
-    client.from("checkpoints").select("id,position,title,question,answer_type,starter_query")
+    client.from("checkpoints").select("id,position,title,question,answer_type,starter_query,base_points")
       .eq("challenge_id", assignment.data.challenge_id).order("position"),
   ]);
   if (challenge.error || questions.error) throw new Error("Could not load the challenge.");

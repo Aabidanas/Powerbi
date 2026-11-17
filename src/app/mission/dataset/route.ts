@@ -12,9 +12,9 @@ export async function GET() {
     .select("challenges(dataset_path)").eq("team_id", team.id).maybeSingle();
   const path = (data?.challenges as unknown as {dataset_path: string} | undefined)?.dataset_path;
   if (error || !path) return new Response("Dataset unavailable", { status: 404 });
-  const file = await access.client.storage.from("competition-datasets").download(path);
+  const extension = path.toLowerCase().endsWith(".zip") ? "zip" : "csv";
+  const file = await access.client.storage.from("competition-datasets")
+    .createSignedUrl(path, 60, { download: `data-quest.${extension}` });
   if (file.error) return new Response("Dataset unavailable", { status: 404 });
-  return new Response(file.data, {
-    headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": 'attachment; filename="data-quest.csv"', "Cache-Control": "private, no-store" },
-  });
+  return new Response(null, { status: 302, headers: { Location: file.data.signedUrl, "Cache-Control": "private, no-store" } });
 }

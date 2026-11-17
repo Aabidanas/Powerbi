@@ -1,15 +1,15 @@
 import { Activity, ArrowRight, BarChart3, BookOpen, Clock3, Download, MapPin, ScanLine, Trophy, Users, Zap } from "lucide-react";
-import type { TrackId } from "@/lib/challenges";
+import { CHECKPOINT_HINT_COST, type TrackId } from "@/lib/challenges";
 import { Action, Badge, Card, trackIcons } from "./ui";
 
 const battle = [
   { name: "Sync Dataset & Model", icon: Download, description: "Download the enterprise dataset assigned to your team. Import it into Power BI Desktop, inspect the schema and configure relationships.", note: "Est. setup: 15 minutes", tone: "yellow" },
-  { name: "Solve Checkpoints", icon: ScanLine, description: "Checkpoints unlock sequentially. Formulate DAX measures, derive business KPIs and paste your answers into the validation panel.", note: "100 points per correct answer", tone: "blue" },
-  { name: "Ascend Leaderboard", icon: BarChart3, description: "Each validated checkpoint yields up to 100 points. Track your rank as scores update and race toward the championship podium.", note: "Automated scoring engine", tone: "mint" },
+  { name: "Solve Checkpoints", icon: ScanLine, description: "Checkpoints unlock sequentially. Formulate DAX measures, derive business KPIs and paste your answers into the validation panel.", note: "Points vary by checkpoint", tone: "blue" },
+  { name: "Ascend Leaderboard", icon: BarChart3, description: "Earn the checkpoint’s points with a correct answer. Track your rank as scores update.", note: "Automated scoring engine", tone: "mint" },
 ];
 const specs = [
   { name: "Teams of 1–3 Analysts", description: "Compete solo or assemble a squad. Share one case, one checkpoint pipeline and one team score.", icon: Users, tone: "yellow" },
-  { name: "Solving Time", description: "Solving time breaks ties on points. A hint costs 20 points on the checkpoint.", icon: Clock3, tone: "mint" },
+  { name: "Solving Time", description: `Solving time breaks ties on points. A hint costs ${CHECKPOINT_HINT_COST} points on the checkpoint.`, icon: Clock3, tone: "mint" },
   { name: "Real-Time Telemetry", description: "See accepted submissions update checkpoint progress and team rankings.", icon: Zap, tone: "blue" },
   { name: "BITS Pilani Dubai Campus", description: "Dubai International Academic City · Microsoft Tech Club", icon: MapPin, tone: "" },
 ];

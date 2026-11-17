@@ -1,4 +1,4 @@
-import type { Checkpoint } from "./challenges.ts";
+import { DEFAULT_CHECKPOINT_POINTS, MAX_CHECKPOINT_POINTS, type Checkpoint } from "./challenges.ts";
 
 export function validateCheckpoint(value: unknown): Checkpoint {
   if (!value || typeof value !== "object") throw new Error("Enter a complete checkpoint.");
@@ -12,9 +12,12 @@ export function validateCheckpoint(value: unknown): Checkpoint {
   if (type !== "number" && type !== "text" && type !== "dax") throw new Error("Answer type must be number, text, or dax.");
   if (typeof tolerance !== "number" || !Number.isFinite(tolerance) || tolerance < 0) throw new Error("Tolerance must be a non-negative number.");
   if (!Array.isArray(variants) || variants.some(item => typeof item !== "string" || item.length > 500)) throw new Error("Variants must be a list of text answers.");
-  const { query } = input;
+  const { query, points } = input;
   if (query !== undefined && query !== null && (typeof query !== "string" || query.length > 4000 || query.includes("\0"))) {
     throw new Error("Enter a query of up to 4000 characters or leave it blank.");
+  }
+  if (points !== undefined && (typeof points !== "number" || !Number.isInteger(points) || points < 0 || points > MAX_CHECKPOINT_POINTS)) {
+    throw new Error("Checkpoint points must be a non-negative whole number within the supported range.");
   }
   const expected = required("expected", 500);
   if (type === "number" && (!/^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(expected) || !Number.isFinite(Number(expected)))) {
@@ -22,6 +25,7 @@ export function validateCheckpoint(value: unknown): Checkpoint {
   }
   return { title: required("title", 80), question: required("question", 500), hint: required("hint", 500), expected, type, tolerance, variants: variants.map(item => item.trim()).filter(Boolean),
     ...(query === undefined ? {} : { query: typeof query === "string" && query.trim() ? query : null }),
+    ...(points === undefined ? {} : { points }),
   };
 }
 
@@ -40,5 +44,5 @@ export async function readCheckpointFile(file: FormDataEntryValue | null) {
 }
 
 export const CHECKPOINT_TEMPLATE = JSON.stringify([
-  { title: "Total sales", question: "What is the total of the Sales column?", hint: "Add every value in the Sales column.", type: "number", expected: "1200", tolerance: 0, variants: [], query: null },
+  { title: "Total sales", question: "What is the total of the Sales column?", hint: "Add every value in the Sales column.", type: "number", expected: "1200", tolerance: 0, variants: [], query: null, points: DEFAULT_CHECKPOINT_POINTS },
 ], null, 2);

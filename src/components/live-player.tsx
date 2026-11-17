@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { beginChallenge, playCheckpoint } from "@/app/live-actions";
 import { challengeTime, formatDuration } from "@/lib/challenge-time";
+import { CHECKPOINT_HINT_COST } from "@/lib/challenges";
 import { competitionConfig } from "@/lib/supabase/access";
 import { acceptedCheckpointAnswer, currentTeamId, liveRankings, ownTeam, playerMission, teamLobbyDetails } from "@/lib/supabase/data";
 import { ElapsedClock } from "./elapsed-clock";
@@ -92,7 +93,7 @@ export async function LiveArena({ reviewPosition, teammateAdvanced }: { reviewPo
         <Action href="/leaderboard" secondary>Leaderboard</Action>
       </Card>
       <div className="stack">
-        <Card className="panel"><div className="micro-head"><strong>Case dataset</strong></div><a className="button secondary" href="/mission/dataset">Download assigned CSV</a></Card>
+        <Card className="panel"><div className="micro-head"><strong>Case dataset</strong></div><a className="button secondary" href="/mission/dataset">Download assigned dataset</a></Card>
         <Card className="panel checkpoint-panel">
           <div id="checkpoint-workspace" className="micro-head"><strong>Checkpoint workspace</strong>
             {selected && <Badge tone={completedAt ? "mint" : "yellow"}>Checkpoint {selected.position}{completedAt && " · Solved"}</Badge>}
@@ -100,6 +101,7 @@ export async function LiveArena({ reviewPosition, teammateAdvanced }: { reviewPo
           {timing.finishedAt !== null && <Notice>You completed every checkpoint.</Notice>}
           {selected && selectedUnlock && <>
             <h2>{selected.title}</h2><p>{selected.question}</p>
+            <p className="muted">{selected.base_points} points before hints</p>
             {selected.starter_query && <StarterQuery key={selected.id} query={selected.starter_query}/>}
             <p className="checkpoint-clock">Question time <strong><ElapsedClock key={selected.id} startedAt={Date.parse(selectedUnlock.unlocked_at)} finishedAt={completedAt ? Date.parse(completedAt) : null} sampledAt={sampledAt} label="Question time" precise/></strong></p>
           </>}
@@ -115,7 +117,7 @@ export async function LiveArena({ reviewPosition, teammateAdvanced }: { reviewPo
               <LiveForm key={current.id} action={playCheckpoint} label="Submit answer" operation="answer">
                 <input type="hidden" name="checkpoint" value={current.id}/><label>Your answer<textarea name="answer" required maxLength={500} rows={3}/></label>
               </LiveForm>
-              <LiveForm key={current.id + "-hint"} action={playCheckpoint} label={mission.hints.has(current.id) ? "Show hint again" : "Reveal hint (−20 points)"} operation="hint" secondary compact><input type="hidden" name="checkpoint" value={current.id}/></LiveForm>
+              <LiveForm key={current.id + "-hint"} action={playCheckpoint} label={mission.hints.has(current.id) ? "Show hint again" : `Reveal hint (−${CHECKPOINT_HINT_COST} points)`} operation="hint" secondary compact><input type="hidden" name="checkpoint" value={current.id}/></LiveForm>
             </div>
           </>}
         </Card>
