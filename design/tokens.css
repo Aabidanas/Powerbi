@@ -1,0 +1,92 @@
+/* DATA QUEST design tokens
+ * 1.png (550 × 1600): landing page, primary visual reference.
+ * 2.png (1018 × 1600): leaderboard, source for rankings and telemetry.
+ * Palette hex values are sampled from flat fills or repeated pixels.
+ * Typefaces are candidates from the brief. Sizes, spacing and geometry
+ * are implementation estimates because the PNGs lack source CSS and scale metadata.
+ */
+
+:root {
+  /* Shared palette */
+  --dq-color-canvas: #fbf9f3;
+  --dq-color-surface: #ffffff;
+  --dq-color-ink: #000000;
+  --dq-color-accent: #ffe600;
+
+  /* Landing page surfaces */
+  --dq-color-landing-section: #f5f3ee;
+  --dq-color-landing-panel: #faf8f5;
+  --dq-color-hero-grid: #f5f3ed;
+  --dq-color-landing-metric-blue: #bae6fd;
+
+  /* Landing track tiles and accents */
+  --dq-color-landing-retail: var(--dq-color-accent);
+  --dq-color-landing-fintech: #fecdd3;
+  --dq-color-landing-supply: var(--dq-color-landing-metric-blue);
+  --dq-color-landing-healthcare: #a7f3d0;
+
+  /* Leaderboard track chips */
+  --dq-color-ranking-retail: var(--dq-color-accent);
+  --dq-color-ranking-fintech: #e0f2fe;
+  --dq-color-ranking-supply: #ede7f6;
+  --dq-color-ranking-healthcare: #dcfce7;
+  --dq-color-podium-first: var(--dq-color-accent);
+  --dq-color-podium-supply-label: #fce4ec;
+
+  /* Rankings and checkpoint status */
+  --dq-color-ranking-chrome: #f0eee8;
+  --dq-color-ranking-current: #fffbd6;
+  --dq-color-ranking-rule: #e2e2e2;
+  --dq-color-checkpoint-pass: #00c853;
+  --dq-color-checkpoint-review: var(--dq-color-accent);
+  --dq-color-checkpoint-locked: #e4e2dd;
+  --dq-color-trend-up: #d4f8e8;
+  --dq-color-trend-down: #ffdad6;
+  --dq-color-trend-flat: var(--dq-color-ranking-chrome);
+
+  /* Typography candidates and responsive scale */
+  --dq-font-display: "Anton", "Arial Narrow", sans-serif;
+  --dq-font-body: "Space Grotesk", Arial, sans-serif;
+  --dq-type-hero: clamp(3.5rem, 9vw, 6.5rem);
+  --dq-type-page-title: clamp(2rem, 4vw, 3.5rem);
+  --dq-type-section-title: clamp(1.5rem, 3.5vw, 2.75rem);
+  --dq-type-card-title: 1.125rem;
+  --dq-type-body: 1rem;
+  --dq-type-small: 0.875rem;
+  --dq-type-label: 0.6875rem;
+  --dq-weight-regular: 400;
+  --dq-weight-medium: 500;
+  --dq-weight-bold: 700;
+  --dq-leading-display: 1.05;
+  --dq-leading-body: 1.5;
+  --dq-tracking-display: -0.025em;
+  --dq-tracking-label: 0.08em;
+  --dq-case-label: uppercase;
+
+  /* Geometry and black offset shadows */
+  --dq-border-thin: 1px;
+  --dq-border-strong: 2px;
+  --dq-outline: var(--dq-border-strong) solid var(--dq-color-ink);
+  --dq-radius-label: 4px;
+  --dq-radius-control: 8px;
+  --dq-radius-card: 12px;
+  --dq-radius-pill: 999px;
+  --dq-shadow-chip: 2px 2px 0 var(--dq-color-ink);
+  --dq-shadow-raised: 3px 4px 0 var(--dq-color-ink);
+  --dq-shadow-featured: 5px 6px 0 var(--dq-color-ink);
+
+  /* Layout spacing and hero grid */
+  --dq-space-1: 0.25rem;
+  --dq-space-2: 0.5rem;
+  --dq-space-3: 0.75rem;
+  --dq-space-4: 1rem;
+  --dq-space-6: 1.5rem;
+  --dq-space-8: 2rem;
+  --dq-space-12: 3rem;
+  --dq-space-16: 4rem;
+  --dq-page-gutter: clamp(1rem, 2.5vw, 2rem);
+  --dq-section-gap: clamp(2.5rem, 5vw, 5rem);
+  --dq-card-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  --dq-grid-line: 1px;
+  --dq-grid-cell: 24px;
+}

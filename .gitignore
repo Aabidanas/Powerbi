@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+.npm-cache/
+*.tsbuildinfo
+.env*
+!.env.example
+.vercel/
+/starter-challenge-cheatsheet.md
+/design/*.pdf
