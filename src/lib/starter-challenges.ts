@@ -24,7 +24,6 @@ export function starterChallenge(slug: string) {
     };
   });
   const total = rows.reduce((sum, row) => sum + row.amount, 0);
-  const targetTotal = rows.reduce((sum, row) => sum + row.target, 0);
   const flagged = rows.filter(row => row.flag === 1);
   const totalsByGroup = item.groups.map(group => ({
     group,
@@ -39,7 +38,6 @@ export function starterChallenge(slug: string) {
     checkpoint("Count flagged records", `How many records are marked ${item.event} (${item.flag} = 1)?`, `Filter ${item.flag} to 1 and count the remaining rows.`, flagged.length),
     checkpoint("Find the leading group", `Which ${item.group} has the highest total ${item.amount}? Enter the name as it appears in the CSV.`, `Group by ${item.group}, sum ${item.amount} for each group, then sort descending.`, totalsByGroup[0].group),
     checkpoint("Calculate the event rate", `What percentage of rows have ${item.flag} = 1? Enter the number rounded to two decimal places. For example, enter 12.50 for 12.50 percent.`, "Divide the flagged row count by the full row count, then multiply by 100.", Number((flagged.length / rows.length * 100).toFixed(2)), 0.005),
-    checkpoint("Measure the variance", `Calculate total ${item.amount} minus total ${item.target}. Include a minus sign if the result is negative.`, `Sum each column separately, then subtract the ${item.target} total from the ${item.amount} total.`, total - targetTotal),
   ];
   const csv = [
     ["RecordID", "Date", item.group, item.amount, item.target, item.flag],

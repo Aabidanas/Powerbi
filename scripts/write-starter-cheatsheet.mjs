@@ -5,13 +5,13 @@ import { validateCheckpoint } from "../src/lib/checkpoint-import.ts";
 const sections = ["retail", "fintech", "supply", "health"].map(slug => {
   const { name, filename, csv, checkpoints } = starterChallenge(slug);
   const [, ...rows] = csv.trim().split(/\r?\n/).map(row => row.split(","));
-  if (rows.length !== 48 || checkpoints.length !== 5) throw new Error(`Invalid starter case for ${slug}`);
+  if (rows.length !== 48 || checkpoints.length !== 4) throw new Error(`Invalid starter case for ${slug}`);
   const sum = (items, column) => items.reduce((total, row) => total + Number(row[column]), 0);
   const events = sum(rows, 5);
   const groups = [...new Set(rows.map(row => row[2]))].sort((a, b) =>
     sum(rows.filter(row => row[2] === b), 3) - sum(rows.filter(row => row[2] === a), 3)
   );
-  const expected = [sum(rows, 3), events, groups[0], Number((100 * events / rows.length).toFixed(2)), sum(rows, 3) - sum(rows, 4)];
+  const expected = [sum(rows, 3), events, groups[0], Number((100 * events / rows.length).toFixed(2))];
   return [
     `## ${name}`,
     "",
@@ -42,4 +42,4 @@ Testing with a real team locks the track’s content. Before editing the tested 
 `;
 
 await writeFile(new URL("../starter-challenge-cheatsheet.md", import.meta.url), [intro, ...sections].join("\n"));
-console.log("Verified 20 answers against the generated CSV datasets.");
+console.log("Verified 16 answers against the generated CSV datasets.");
