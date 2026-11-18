@@ -134,7 +134,7 @@ export function LiveScoreTable({ rows, own }: { rows: Awaited<ReturnType<typeof 
   return <div className="table-scroll" tabIndex={0} aria-label="Scrollable leaderboard"><table>
     <thead><tr><th scope="col">Rank</th><th scope="col">Team</th><th scope="col">Track</th><th scope="col">Solved</th><th scope="col">Score</th><th scope="col">Solving time</th></tr></thead>
     <tbody>{rows.map((row, i) => <tr key={row.team_id} className={row.team_id === own ? "own-row" : ""}>
-      <td>{i + 1}</td><td>{row.team_name}{row.team_id === own && " · Your team"}</td><td>{row.track_slug}</td><td>{row.solved}</td><td><strong>{row.points}</strong></td><td className="elapsed-time">{row.solved ? formatDuration(row.solving_time_us / 1000, true) : "—"}</td>
+      <td>{i + 1}</td><td>{row.team_name}{row.team_id === own && " · Your team"}</td><td>{row.trackName ?? "—"}</td><td>{row.solved}</td><td><strong>{row.points}</strong></td><td className="elapsed-time">{row.solved ? formatDuration(row.solving_time_us / 1000, true) : "—"}</td>
     </tr>)}</tbody>
   </table></div>;
 }

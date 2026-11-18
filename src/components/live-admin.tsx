@@ -26,7 +26,7 @@ export async function LiveAdmin() {
   return <div className="shell page organizer-page">
     <LiveRefresh competition={event.id}/>
     <PageTitle tag="Organizer · Live competition" title="Command Console">Manage registrations, prepare challenge cases and oversee the live event.</PageTitle>
-    <nav className="console-nav" aria-label="Console sections"><a href="#controls">Controls</a><a href="#teams">Teams</a><Action href="/admin/challenges" secondary className="small-button">Challenge library</Action><a href="#submissions">Submissions</a><a href="#scoreboard">Scoreboard</a></nav>
+    <nav className="console-nav" aria-label="Console sections"><a href="#controls">Controls</a><a href="#teams">Teams &amp; topic assignments</a><Action href="/admin/challenges" secondary className="small-button">Challenge library</Action><a href="#submissions">Submissions</a><a href="#scoreboard">Scoreboard</a></nav>
     <div className="stat-grid"><Metric tone="yellow" value={teams.length} label="Registered teams"/><Metric value={participants} label="Analysts"/><Metric tone="blue" value={cases.data.length} label="Challenge cases"/><Metric tone="mint" value={scores.reduce((total, row) => total + row.solved, 0)} label="Solved checkpoints"/></div>
     <section id="controls" className="compact"><Card className="panel">
       <div className="micro-head"><strong><Radio size={16}/> Registration</strong><Badge tone="yellow">{event.registration_open ? "Open" : "Closed"}</Badge></div>
@@ -37,15 +37,22 @@ export async function LiveAdmin() {
     </Card></section>
     <section id="teams" className="compact"><Card className="panel">
       <div className="micro-head"><strong><Users size={16}/> Team management</strong><Badge>{teams.length} registered</Badge></div>
+      <p>Use Assign topic to choose a team’s challenge before their captain clicks Begin challenge. Saving a topic updates their lobby. Teams without a manual assignment receive a topic automatically when they begin.</p>
       {teams.length === 0 ? <p>No registrations yet.</p> : <div className="table-scroll" tabIndex={0} aria-label="Scrollable team roster"><table>
-        <thead><tr><th scope="col">Team</th><th scope="col">Roster</th><th scope="col">Status</th><th scope="col">Overall time</th><th scope="col">Assignment</th><th scope="col">Registration</th></tr></thead>
+        <thead><tr><th scope="col">Team</th><th scope="col">Roster</th><th scope="col">Status</th><th scope="col">Overall time</th><th scope="col">Assigned topic</th><th scope="col">Registration</th></tr></thead>
         <tbody>{teams.map(team => <tr key={team.id}><td><strong>{team.name}</strong></td>
           <td>{teamRosterNames(team).join(", ")}</td>
           <td><Badge tone={startedTeams.has(team.id) ? "mint" : ""}>{startedTeams.has(team.id) ? "In arena" : "Registered"}</Badge></td>
           <td><TeamTimes teamName={team.name} checkpoints={team.checkpoint_unlocks} sampledAt={sampledAt}/></td>
-          <td>{!startedTeams.has(team.id) ? <LiveForm action={manageCompetition} operation="assign" label="Save assignment" compact secondary>
-            <input type="hidden" name="team" value={team.id}/><label><span className="sr-only">Assigned challenge for {team.name}</span><select name="challenge" defaultValue={assigned.get(team.id) ?? ""}><option value="">Assign automatically</option>{cases.data.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-          </LiveForm> : cases.data.find(item => item.id === assigned.get(team.id))?.name ?? "Unassigned"}</td>
+          <td><p>{cases.data.find(item => item.id === assigned.get(team.id))?.name ?? "Automatic assignment"}</p>
+            {!startedTeams.has(team.id) ? <Popup label="Assign topic" title={`Assign topic to ${team.name}`}>
+              <p>Choose the challenge this team will receive when their captain clicks Begin challenge. You can change it until they begin.</p>
+              <LiveForm action={manageCompetition} operation="assign" label="Save topic" compact disabled={!cases.data.length}>
+                <input type="hidden" name="team" value={team.id}/>
+                <label>Challenge topic<select name="challenge" defaultValue={assigned.get(team.id) ?? ""}><option value="">Assign automatically when team begins</option>{cases.data.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+              </LiveForm>
+            </Popup> : <small>Locked after beginning</small>}
+          </td>
           <td>{!startedTeams.has(team.id) && <Popup label="Remove…" title={`Remove ${team.name}?`}><p>This will remove the team’s registration.</p><LiveForm action={manageCompetition} operation="remove" label="Remove registration" compact><input type="hidden" name="team" value={team.id}/></LiveForm></Popup>}</td>
         </tr>)}</tbody>
       </table></div>}

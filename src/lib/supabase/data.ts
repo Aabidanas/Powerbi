@@ -38,11 +38,15 @@ export async function signedInDestination() {
 export const liveRankings = cache(async () => {
   const event = await liveEvent();
   const client = await supabaseServer();
-  const { data, error } = await client.from("leaderboard_scores")
-    .select("team_id,team_name,track_slug,solved,points,solving_time_us")
-    .eq("competition_id", event.id).order("points", { ascending: false }).order("solving_time_us").order("team_id");
+  const [{ data, error }, tracks] = await Promise.all([
+    client.from("leaderboard_scores")
+      .select("team_id,team_name,track_slug,solved,points,solving_time_us")
+      .eq("competition_id", event.id).order("points", { ascending: false }).order("solving_time_us").order("team_id"),
+    competitionCatalogue(event.id),
+  ]);
   if (error) throw new Error("Could not load the leaderboard.");
-  return data;
+  const trackNames = new Map(tracks.map(track => [track.slug, track.name]));
+  return data.map(row => ({ ...row, trackName: trackNames.get(row.track_slug) ?? null }));
 });
 
 export const competitionCatalogue = cache(async (competition: string) => {
